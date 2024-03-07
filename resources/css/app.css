@@ -1,3 +1,15 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+#app {
+    height: 100%;
+}
+
+.hide-scroller {
+    scrollbar-width: none;
+}
+
+.hide-scroller::-webkit-scrollbar {
+    display: none;
+}
