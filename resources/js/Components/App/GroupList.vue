@@ -27,7 +27,7 @@ import {Disclosure, DisclosureButton, DisclosurePanel} from "@headlessui/vue";
         </div>
 
         <div class="flex-col h-full overflow-hidden hidden lg:flex">
-            <h2 class="text-2xl font-bold mb-6">My Groups</h2>
+            <h2 class="text-2xl font-bold">My Groups</h2>
             <GroupListItem/>
         </div>
 
