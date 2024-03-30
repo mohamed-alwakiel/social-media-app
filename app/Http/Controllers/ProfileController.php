@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Http\Resources\UserResource;
 use App\Models\User;
+use GuzzleHttp\Psr7\UploadedFile;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -11,6 +13,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Inertia\Response;
+use JetBrains\PhpStorm\NoReturn;
 
 class ProfileController extends Controller
 {
@@ -22,7 +25,7 @@ class ProfileController extends Controller
         return Inertia::render('Profile/View', [
             'mustVerifyEmail' => $user instanceof MustVerifyEmail,
             'status' => session('status'),
-            'user' => $user
+            'user' => new UserResource($user)
         ]);
     }
 
@@ -62,4 +65,29 @@ class ProfileController extends Controller
 
         return Redirect::to('/');
     }
+
+    /**
+     * Update user profile images (cover or avatar).
+     */
+    public function updateProfileImages(Request $request)
+    {
+        $user = $request->user();
+
+        $data = $request->validate([
+            'avatar' => ['nullable', 'image'],
+            'cover' => ['nullable', 'image','mimes:pdf']
+        ]);
+        $avatar = $data['avatar'] ?? null;
+
+        /** @var \Illuminate\Http\UploadedFile $cover */
+        $cover = $data['cover'] ?? null;
+        if ($cover) {
+            $path = $cover->store('covers/' . $user->id, 'public');
+            $user->update(['cover_path' => $path]);
+        }
+
+        session('success', 'Cover image has been updated');
+        return back()->with('status', 'cover-image-update');
+    }
+
 }
