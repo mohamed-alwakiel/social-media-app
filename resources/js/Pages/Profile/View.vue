@@ -51,10 +51,12 @@ function OnCoverChange(event) {
         reader.readAsDataURL(profileImagesForm.cover)
     }
 }
+
 function resetCoverImage() {
     profileImagesForm.cover = null
     coverImageSrc.value = null
 }
+
 function submitCoverImage() {
     profileImagesForm.post(route('profile.updateProfileImages'), {
         onSuccess: () => {
@@ -79,10 +81,12 @@ function OnAvatarChange(event) {
         reader.readAsDataURL(profileImagesForm.avatar)
     }
 }
+
 function resetAvatarImage() {
     profileImagesForm.avatar = null
     avatarImageSrc.value = null
 }
+
 function submitAvatarImage() {
     profileImagesForm.post(route('profile.updateProfileImages'), {
         onSuccess: () => {
@@ -150,7 +154,8 @@ function submitAvatarImage() {
                     </div>
                 </div>
                 <div class="flex">
-                    <div class="flex items-center rounded-full justify-center group/avatar relative -mt-[64px] ml-[64px] w-[128px] h-[128px]">
+                    <div
+                        class="flex items-center rounded-full justify-center group/avatar relative -mt-[64px] ml-[64px] w-[128px] h-[128px]">
                         <img
                             :src="avatarImageSrc || user.avatar_url || '/img/avatar_default.png'"
                             class="w-full h-full object-cover rounded-full" alt="" srcset="">
@@ -163,7 +168,8 @@ function submitAvatarImage() {
                                    class="absolute left-0 top-0 bottom-0 right-0 opacity-0 cursor-pointer"
                                    @change="OnAvatarChange">
                         </button>
-                        <div v-else class="absolute top-1 right-0 flex flex-col gap-2 opacity-0 rounded group-hover/avatar:opacity-100">
+                        <div v-else
+                             class="absolute top-1 right-0 flex flex-col gap-2 opacity-0 rounded group-hover/avatar:opacity-100">
                             <button
                                 @click="resetAvatarImage"
                                 class="flex items-center justify-center w-7 h-7 bg-red-500/80 text-white rounded-full">
@@ -193,10 +199,6 @@ function submitAvatarImage() {
             <div class="border-t">
                 <TabGroup>
                     <TabList class="pl-[250px] flex bg-white">
-                        <Tab v-if="isMyProfile" as="template" v-slot="{ selected }">
-                            <TabItem text="About" :selected="selected"></TabItem>
-                        </Tab>
-
                         <Tab as="template" v-slot="{ selected }">
                             <TabItem text="Posts" :selected="selected"></TabItem>
                         </Tab>
@@ -211,12 +213,13 @@ function submitAvatarImage() {
                         <Tab as="template" v-slot="{ selected }">
                             <TabItem text="Photos" :selected="selected"></TabItem>
                         </Tab>
+
+                        <Tab v-if="isMyProfile" as="template" v-slot="{ selected }">
+                            <TabItem text="My Profile" :selected="selected"></TabItem>
+                        </Tab>
                     </TabList>
 
                     <TabPanels class="mt-2">
-                        <TabPanel v-if="isMyProfile" key="about">
-                            <Edit :must-verify-email="mustVerifyEmail" :status="status"/>
-                        </TabPanel>
                         <TabPanel key="posts" class="bg-white p-3 shadow">
                             Posts Content
                         </TabPanel>
@@ -229,7 +232,9 @@ function submitAvatarImage() {
                         <TabPanel key="photos" class="bg-white p-3 shadow">
                             Photos Content
                         </TabPanel>
-                    </TabPanels>
+                        <TabPanel v-if="isMyProfile" key="about">
+                            <Edit :must-verify-email="mustVerifyEmail" :status="status"/>
+                        </TabPanel>                    </TabPanels>
                 </TabGroup>
             </div>
         </div>
