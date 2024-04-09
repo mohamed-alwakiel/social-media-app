@@ -7,6 +7,10 @@ import PostList from "@/Components/App/PostList.vue";
 import {Head} from "@inertiajs/vue3";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 
+defineProps({
+    posts: Object
+})
+
 </script>
 
 <template>
@@ -22,7 +26,7 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
             </div>
             <div class="md:col-span-12 lg:col-span-6 lg:order-2 h-[500px] lg:h-full flex flex-col overflow-hidden">
                 <CreatePost/>
-                <PostList class="flex-1"/>
+                <PostList :posts="posts.data" class="flex-1"/>
             </div>
 
         </div>

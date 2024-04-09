@@ -1,6 +1,10 @@
 <script setup>
 import PostItem from "@/Components/App/PostItem.vue";
 
+defineProps({
+    posts: Array
+})
+
 const post1 = {
     user: {
         id: 1,
@@ -62,16 +66,7 @@ const post2 = {
 
 <template>
     <div class="overflow-scroll mt-2 hide-scroller">
-        <PostItem :post="post1"/>
-        <PostItem :post="post2"/>
-        <PostItem :post="post1"/>
-        <PostItem :post="post2"/>
-        <PostItem :post="post1"/>
-        <PostItem :post="post2"/>
-        <PostItem :post="post1"/>
-        <PostItem :post="post2"/>
-        <PostItem :post="post1"/>
-        <PostItem :post="post2"/>
+        <PostItem v-for="post of posts" :key="post.id" :post="post"/>
     </div>
 </template>
 
