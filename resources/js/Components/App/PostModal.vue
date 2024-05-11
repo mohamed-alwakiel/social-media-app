@@ -1,7 +1,6 @@
 <script setup>
 import {computed, watch} from 'vue'
 import {Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot,} from '@headlessui/vue'
-import TextAreaInput from "@/Components/TextAreaInput.vue";
 import PostUserHeader from "@/Components/App/PostUserHeader.vue";
 import {XMarkIcon} from '@heroicons/vue/20/solid'
 import {useForm} from "@inertiajs/vue3";
@@ -45,12 +44,23 @@ function closeModal() {
 }
 
 function submit() {
-    form.put(route('post.update', props.post.id), {
-        preserveScroll: true,
-        onSuccess: () => {
-            show.value = false
-        }
-    })
+    if (form.id) {
+        form.put(route('post.update', props.post.id), {
+            preserveScroll: true,
+            onSuccess: () => {
+                show.value = false
+                form.reset()
+            }
+        })
+    } else {
+        form.post(route('post.create'), {
+            preserveScroll: true,
+            onSuccess: () => {
+                show.value = false
+                form.reset()
+            }
+        });
+    }
 }
 
 
@@ -95,7 +105,7 @@ function submit() {
                                     as="h3"
                                     class="font-medium bg-gray-100 text-gray-900 p-4 flex items-center justify-between"
                                 >
-                                    Update Post
+                                    {{ form.id ? 'Update Post' : 'Create Post' }}
                                     <button @click="show = false"
                                             class="w-8 h-8 rounded-full hover:bg-black/10 flex justify-center items-center transition">
                                         <XMarkIcon class="w-4 h-4"></XMarkIcon>
