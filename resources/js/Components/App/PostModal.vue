@@ -1,16 +1,11 @@
 <script setup>
-import {computed, onMounted, reactive, ref, watch} from 'vue'
-import {
-    TransitionRoot,
-    TransitionChild,
-    Dialog,
-    DialogPanel,
-    DialogTitle,
-} from '@headlessui/vue'
+import {computed, watch} from 'vue'
+import {Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot,} from '@headlessui/vue'
 import TextAreaInput from "@/Components/TextAreaInput.vue";
 import PostUserHeader from "@/Components/App/PostUserHeader.vue";
 import {XMarkIcon} from '@heroicons/vue/20/solid'
 import {useForm} from "@inertiajs/vue3";
+import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 
 const props = defineProps({
     post: {
@@ -31,6 +26,14 @@ const show = computed({
 })
 
 const emit = defineEmits(['update:modelValue'])
+
+const editor = ClassicEditor;
+const editorConfig = {
+    toolbar: {
+        items: ['heading', '|', 'bold', 'italic', '|', 'link', '|', 'bulletedList', 'numberedList', '|', 'outdent', 'indent',
+            '|', 'blockQuote']
+    }
+};
 
 watch(() => props.post, () => {
     form.id = props.post.id
@@ -100,7 +103,8 @@ function submit() {
                                 </DialogTitle>
                                 <div class="px-4 py-2">
                                     <PostUserHeader :post="post" :show-time="false" class="mb-4"/>
-                                    <TextAreaInput v-model="form.body" :autoResize="true" class="w-full hide-scroller"/>
+                                    <ckeditor :editor="editor" v-model="form.body" :config="editorConfig"></ckeditor>
+                                    <!--                                    <TextAreaInput v-model="form.body" :autoResize="true" class="w-full hide-scroller"/>-->
                                 </div>
 
                                 <div class="p-4">
