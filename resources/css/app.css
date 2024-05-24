@@ -107,3 +107,15 @@
     text-decoration: underline;
     color: #4b9afa;
 }
+
+.border-check-black {
+    border: 2px solid black;
+}
+
+.border-check-red {
+    border: 2px solid red;
+}
+
+.border-check-blue {
+    border: 2px solid blue;
+}

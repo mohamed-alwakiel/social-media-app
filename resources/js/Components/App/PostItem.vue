@@ -2,20 +2,16 @@
 
 import {Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItems, MenuItem} from '@headlessui/vue'
 import {PencilIcon, TrashIcon, EllipsisVerticalIcon} from '@heroicons/vue/20/solid'
-import {ref} from "vue";
 import PostUserHeader from "@/Components/App/PostUserHeader.vue";
 import {router} from "@inertiajs/vue3";
+import {isImage} from "@/helper.js";
+import {PaperClipIcon, XMarkIcon} from "@heroicons/vue/20/solid/index.js";
 
 const props = defineProps({
     post: Object
 })
 
 const emit = defineEmits(['editClick'])
-
-function isImage(attachment) {
-    const mime = attachment.mime.split('/')
-    return mime[0].toLowerCase() === 'image'
-}
 
 function openEditModal() {
     emit('editClick', props.post)
@@ -98,10 +94,10 @@ function deletePost() {
         <!-- Post Body -->
         <div>
             <Disclosure v-slot="{ open }">
-                <div v-if="!open" class="ck-content-output"  v-html="post.body.substring(0,150)"/>
+                <div v-if="!open" class="ck-content-output" v-html="post.body.substring(0,150)"/>
                 <template v-if="post.body.length > 200">
                     <DisclosurePanel class="font-small">
-                        <div  class="ck-content-output" v-html="post.body"/>
+                        <div class="ck-content-output" v-html="post.body"/>
                     </DisclosurePanel>
                     <div class="flex justify-end">
                         <DisclosureButton class="text-blue-400 hover:underline mb-2">
@@ -114,6 +110,7 @@ function deletePost() {
         <!-- Post Attachments -->
         <div class="grid sm:grid-cols-2 md:grid-cols-3 gap-2">
             <div v-for="attachment of post.attachments" class="relative rounded group">
+                <!-- download -->
                 <button
                     class="w-6 h-6 hover:bg-gray-500 hover:text-gray-100 flex items-center justify-center cursor-pointer absolute top-2
                     right-2 rounded bg-gray-300 text-gray-800 opacity-0 group-hover:opacity-100 transition-all">
@@ -124,20 +121,15 @@ function deletePost() {
                               clip-rule="evenodd"/>
                     </svg>
                 </button>
-                <div v-if="isImage(attachment)" class="object-cover aspect-square">
-                    <img :src="attachment.url" :alt="attachment.name"/>
+                <!-- download -->
+                <div v-if="isImage(attachment)"
+                     class="object-cover aspect-square">
+                    <img :src="attachment.url" :alt="attachment.name" class="w-full h-full"/>
                 </div>
                 <div v-else
-                     class="aspect-square border flex flex-col justify-center items-center text-gray-500">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
-                         class="w-12 h-12">
-                        <path
-                            d="M5.625 1.5c-1.036 0-1.875.84-1.875 1.875v17.25c0 1.035.84 1.875 1.875 1.875h12.75c1.035 0 1.875-.84 1.875-1.875V12.75A3.75 3.75 0 0 0 16.5 9h-1.875a1.875 1.875 0 0 1-1.875-1.875V5.25A3.75 3.75 0 0 0 9 1.5H5.625Z"/>
-                        <path
-                            d="M12.971 1.816A5.23 5.23 0 0 1 14.25 5.25v1.875c0 .207.168.375.375.375H16.5a5.23 5.23 0 0 1 3.434 1.279 9.768 9.768 0 0 0-6.963-6.963Z"/>
-                    </svg>
-                    <small>
-
+                     class="aspect-square border flex flex-col justify-center items-center text-gray-500 bg-gray-100 p-3 overflow-hidden break-words">
+                    <PaperClipIcon class="w-12 h-12 mb-2"/>
+                    <small class="text-center">
                         {{ attachment.name }}
                     </small>
                 </div>
