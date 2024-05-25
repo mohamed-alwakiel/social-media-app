@@ -1,11 +1,19 @@
 <script setup>
 
 import {Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItems, MenuItem} from '@headlessui/vue'
-import {PencilIcon, TrashIcon, EllipsisVerticalIcon} from '@heroicons/vue/20/solid'
+import {
+    PencilIcon,
+    TrashIcon,
+    EllipsisVerticalIcon,
+    HandThumbUpIcon,
+    ChatBubbleLeftRightIcon,
+    ArrowDownTrayIcon
+} from '@heroicons/vue/20/solid'
 import PostUserHeader from "@/Components/App/PostUserHeader.vue";
 import {router} from "@inertiajs/vue3";
 import {isImage} from "@/helper.js";
 import {PaperClipIcon, XMarkIcon} from "@heroicons/vue/20/solid/index.js";
+import {computed} from "vue";
 
 const props = defineProps({
     post: Object
@@ -22,6 +30,18 @@ function deletePost() {
         router.delete(route('post.destroy', props.post), {
             preserveScroll: true
         })
+    }
+}
+
+function AttachmentGridShowClass(count) {
+    switch (count) {
+        case 1:
+            return 'grid-cols-1';
+        case 2:
+        case 4:
+            return 'sm:grid-cols-2 gap-2';
+        default:
+            return 'sm:grid-cols-2 md:grid-cols-3 gap-2'
     }
 }
 
@@ -108,18 +128,18 @@ function deletePost() {
             </Disclosure>
         </div>
         <!-- Post Attachments -->
-        <div class="grid sm:grid-cols-2 md:grid-cols-3 gap-2">
-            <div v-for="attachment of post.attachments" class="relative rounded group">
+        <div class="grid"
+             :class="AttachmentGridShowClass(post.attachments.length)">
+            <div v-for="(attachment,index) of post.attachments.slice(0,6)" class="relative rounded group">
+                <div v-if="index === 5"
+                     class="absolute left-0 top-0 right-0 bottom-0 z-10 bg-black/50 flex items-center justify-center text-white">
+                    + {{ post.attachments.length - 6 }} more
+                </div>
                 <!-- download -->
                 <button
-                    class="w-6 h-6 hover:bg-gray-500 hover:text-gray-100 flex items-center justify-center cursor-pointer absolute top-2
+                    class="z-20 w-8 h-8 hover:bg-gray-500 hover:text-gray-100 flex items-center justify-center cursor-pointer absolute top-2
                     right-2 rounded bg-gray-300 text-gray-800 opacity-0 group-hover:opacity-100 transition-all">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
-                         class="w-4 h-4">
-                        <path fill-rule="evenodd"
-                              d="M12 2.25a.75.75 0 0 1 .75.75v11.69l3.22-3.22a.75.75 0 1 1 1.06 1.06l-4.5 4.5a.75.75 0 0 1-1.06 0l-4.5-4.5a.75.75 0 1 1 1.06-1.06l3.22 3.22V3a.75.75 0 0 1 .75-.75Zm-9 13.5a.75.75 0 0 1 .75.75v2.25a1.5 1.5 0 0 0 1.5 1.5h13.5a1.5 1.5 0 0 0 1.5-1.5V16.5a.75.75 0 0 1 1.5 0v2.25a3 3 0 0 1-3 3H5.25a3 3 0 0 1-3-3V16.5a.75.75 0 0 1 .75-.75Z"
-                              clip-rule="evenodd"/>
-                    </svg>
+                    <ArrowDownTrayIcon class="w-8 h-8 p-2"/>
                 </button>
                 <!-- download -->
                 <div v-if="isImage(attachment)"
@@ -138,21 +158,13 @@ function deletePost() {
         <!-- Post Reactions -->
         <div class="mt-3 grid gap-2 grid-cols-2">
             <button class="flex justify-center items-center rounded py-2 bg-gray-100 hover:bg-gray-300">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
-                    <path
-                        d="M7.493 18.5c-.425 0-.82-.236-.975-.632A7.48 7.48 0 0 1 6 15.125c0-1.75.599-3.358 1.602-4.634.151-.192.373-.309.6-.397.473-.183.89-.514 1.212-.924a9.042 9.042 0 0 1 2.861-2.4c.723-.384 1.35-.956 1.653-1.715a4.498 4.498 0 0 0 .322-1.672V2.75A.75.75 0 0 1 15 2a2.25 2.25 0 0 1 2.25 2.25c0 1.152-.26 2.243-.723 3.218-.266.558.107 1.282.725 1.282h3.126c1.026 0 1.945.694 2.054 1.715.045.422.068.85.068 1.285a11.95 11.95 0 0 1-2.649 7.521c-.388.482-.987.729-1.605.729H14.23c-.483 0-.964-.078-1.423-.23l-3.114-1.04a4.501 4.501 0 0 0-1.423-.23h-.777ZM2.331 10.727a11.969 11.969 0 0 0-.831 4.398 12 12 0 0 0 .52 3.507C2.28 19.482 3.105 20 3.994 20H4.9c.445 0 .72-.498.523-.898a8.963 8.963 0 0 1-.924-3.977c0-1.708.476-3.305 1.302-4.666.245-.403-.028-.959-.5-.959H4.25c-.832 0-1.612.453-1.918 1.227Z"/>
-                </svg>
+                <HandThumbUpIcon class="w-6 h-6"/>
                 <span class="ml-2">
                         Like
                     </span>
             </button>
             <button class="flex justify-center items-center rounded py-2 bg-gray-100 hover:bg-gray-300">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
-                    <path
-                        d="M4.913 2.658c2.075-.27 4.19-.408 6.337-.408 2.147 0 4.262.139 6.337.408 1.922.25 3.291 1.861 3.405 3.727a4.403 4.403 0 0 0-1.032-.211 50.89 50.89 0 0 0-8.42 0c-2.358.196-4.04 2.19-4.04 4.434v4.286a4.47 4.47 0 0 0 2.433 3.984L7.28 21.53A.75.75 0 0 1 6 21v-4.03a48.527 48.527 0 0 1-1.087-.128C2.905 16.58 1.5 14.833 1.5 12.862V6.638c0-1.97 1.405-3.718 3.413-3.979Z"/>
-                    <path
-                        d="M15.75 7.5c-1.376 0-2.739.057-4.086.169C10.124 7.797 9 9.103 9 10.609v4.285c0 1.507 1.128 2.814 2.67 2.94 1.243.102 2.5.157 3.768.165l2.782 2.781a.75.75 0 0 0 1.28-.53v-2.39l.33-.026c1.542-.125 2.67-1.433 2.67-2.94v-4.286c0-1.505-1.125-2.811-2.664-2.94A49.392 49.392 0 0 0 15.75 7.5Z"/>
-                </svg>
+                <ChatBubbleLeftRightIcon class="w-6 h-6"/>
                 <span class="ml-2">
                         Comment
                     </span>

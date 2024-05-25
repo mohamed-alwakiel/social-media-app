@@ -26,7 +26,8 @@ const attachmentFiles = ref([])
 
 const form = useForm({
     id: null,
-    body: ''
+    body: '',
+    attachments: []
 })
 
 const show = computed({
@@ -51,25 +52,28 @@ watch(() => props.post, () => {
 
 function closeModal() {
     show.value = false
+    resetModal()
+}
+
+function resetModal() {
     form.reset()
     attachmentFiles.value = []
 }
 
 function submit() {
+    form.attachments = attachmentFiles.value.map(attachment => attachment.file)
     if (form.id) {
         form.put(route('post.update', props.post.id), {
             preserveScroll: true,
             onSuccess: () => {
-                show.value = false
-                form.reset()
+                closeModal()
             }
         })
     } else {
         form.post(route('post.create'), {
             preserveScroll: true,
             onSuccess: () => {
-                show.value = false
-                form.reset()
+                closeModal()
             }
         });
     }
@@ -105,6 +109,18 @@ function removeFile(file) {
     attachmentFiles.value = attachmentFiles.value.filter(f => f !== file)
 }
 
+function AttachmentGridShowClass(count) {
+    switch (count) {
+        case 1:
+            return 'grid-cols-1';
+        case 2:
+        case 4:
+            return 'sm:grid-cols-2 gap-2';
+        default:
+            return 'sm:grid-cols-2 md:grid-cols-3 gap-2'
+    }
+}
+
 </script>
 
 
@@ -112,7 +128,7 @@ function removeFile(file) {
 
     <teleport to="body">
         <TransitionRoot appear :show="show" as="template">
-            <Dialog as="div" @close="closeModal" class="relative z-10">
+            <Dialog as="div" @close="closeModal" class="relative z-50">
                 <TransitionChild
                     as="template"
                     enter="duration-300 ease-out"
@@ -156,7 +172,7 @@ function removeFile(file) {
                                     <PostUserHeader :post="post" :show-time="false" class="mb-4"/>
                                     <ckeditor :editor="editor" v-model="form.body" :config="editorConfig"></ckeditor>
 
-                                    <div class="grid sm:grid-cols-2 md:grid-cols-3 gap-2 mt-3">
+                                    <div class="grid mt-3" :class="AttachmentGridShowClass(attachmentFiles.length)">
                                         <div v-for="(attachment,index) of attachmentFiles"
                                              class="relative rounded group">
                                             <!-- Cancel -->
